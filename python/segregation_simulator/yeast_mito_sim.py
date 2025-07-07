@@ -21,7 +21,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import copy
 
-rng = np.random.default_rng()
+rng = np.random.default_rng(seed=42)
 
 class cell:
     """yeast cell with mitochondrium (or mitochondrial network) 
@@ -128,29 +128,98 @@ class cell:
         self.maxn = self.startbud + rng.geometric(1/(self.maxnaddexp+1))-1
         return(cell(daumito, self.id, self.startbud, self.nspl, self.ndau, self.simulrep, self.maxnaddexp))
 
-def generation_simulator(cell_family) :
-    """ simulate reproduction of one generation of yeast
+def determine_if_should_have_daughter(current_cell, p_have_daughter=1):
+    """_summary_
 
-    Paramter
-    --------
-    cell_family: the tuple of cells of the parental generation
+    Parameters
+    ----------
+    current_cell : cell
+        The current cell being iterated
+    p_have_daughter : int, optional
+        Probability to have a daughter. For WT is 1, meaning that WT always 
+        divides. If less than 1, cell is growing slower than WT. 
+        Default is 1   
 
+    Returns
+    -------
+    int
+        0 for no daughter, 1 for yes daughter
+    """    
+    p_choice = (1-p_have_daughter, p_have_daughter)
+    does_have_daughter = rng.choice((0, 1), p=p_choice)
+    return does_have_daughter
+
+def calculate_p_have_daughter(current_cell, other_strain_growth_rate):
+    """Calculate probability of current cell to have a daughter based on 
+    other_strain_growth_rate
+
+    Parameters
+    ----------
+    current_cell : cell
+        The current cell being iterated
+    other_strain_growth_rate : float
+        Growth rate relative to WT
+
+    Returns
+    -------
+    float
+        Probability to have a daughter
+    
+    Notes
+    -----
+    The probability to have a daughter is calculated with linear interpolation 
+    between (0, 1) for the WT and (1, other_strain_growth_rate) for the 
+    other strain. The status of the current cell is determined as the mean 
+    of the current mito distribution of 0s and 1s
+    
+    """    
+    mutant_ratio = np.mean(current_cell.mito)
+    gr_mut = other_strain_growth_rate
+    mr = mutant_ratio
+    
+    p_have_daughter = 1 - (mr*(1-gr_mut))
+    return p_have_daughter
+    
+
+def generation_simulator(
+        cell_family, other_strain_growth_rate=0.5
+    ):
+    """simulate reproduction of one generation of yeast
+
+    Parameters
+    ----------
+    cell_family : Tuple
+        the tuple of cells of the parental generation
+    
+    
     Returns
     -------
     the tuple of cells of the next generation
     """
+    
     cfl = list(cell_family)
     n = len(cfl)
-    for i in range(n) :
+    for i in range(n):
+        current_cell = cfl[i]
+        p_have_daughter = calculate_p_have_daughter(
+            current_cell, other_strain_growth_rate
+        )
+        does_have_daughter = determine_if_should_have_daughter(
+            current_cell, p_have_daughter=p_have_daughter
+        )
+        if not does_have_daughter:
+            continue
+        
         k = len(cfl)
         d = cfl[i].have_daughter()
         cfl[i].grow()
         cfl.append(d)
         cfl[k].set_id(k)
         cfl[k].grow()
+        
     return(tuple(cfl))
 
-def family_simulator(cell, ngen) :
+def family_simulator(cell, ngen, other_strain_growth_rate=0.5) :
     """ simulate reproduction of one generation of yeast
 
     Paramter
@@ -167,7 +236,9 @@ def family_simulator(cell, ngen) :
     g = (0, )
     fam = copy.deepcopy(p)
     for i in range(ngen):
-        f = generation_simulator(p)
+        f = generation_simulator(
+            p, other_strain_growth_rate=other_strain_growth_rate
+        )
         g = g + tuple(np.repeat(i+1, len(f)))
         fam = fam + copy.deepcopy(f)
         p = f
@@ -241,8 +312,19 @@ def print_family_table(fam, g, filename, prefix="", add = True) :
     for i in range(len(fam)) :
         if fam[i].id not in birthgen :
             birthgen[fam[i].id] = g[i]
-        outf.write(str(g[i] * 1.5) + ',' + str(prefix) + str(fam[i].id) + ',' +  str(prefix) + str(fam[i].mother) +
-                   ',' + str(np.mean(fam[i].mito)) + ',' + str(birthgen[fam[i].id]*1.5) + ',' + str((g[i] - birthgen[fam[i].id])*1.5) + '\n')
+        outf.write(
+            str(g[i] * 1.5) # time
+            + ',' 
+            + str(prefix) + str(fam[i].id) # Cell_ID
+            + ',' 
+            +  str(prefix) + str(fam[i].mother) # Mother
+            + ',' 
+            + str(np.mean(fam[i].mito)) # h
+            + ',' 
+            + str(birthgen[fam[i].id]*1.5) # time_start
+            + ',' 
+            + str((g[i] - birthgen[fam[i].id])*1.5) + '\n' # time_alive
+        )
     outf.close()
 
 

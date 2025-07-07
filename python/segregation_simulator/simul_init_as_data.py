@@ -16,7 +16,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-from yeast_mito_sim import *
+from yeast_mito_sim import (
+    cell, 
+    family_simulator, 
+    print_family_table
+)
 
 f, g = family_simulator( cell((1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1), -1), 6)
 
