@@ -211,8 +211,8 @@ def generation_simulator(
             continue
         
         k = len(cfl)
-        d = cfl[i].have_daughter()
-        cfl[i].grow()
+        d = current_cell.have_daughter()
+        current_cell.grow()
         cfl.append(d)
         cfl[k].set_id(k)
         cfl[k].grow()
@@ -289,7 +289,7 @@ def freq_spect(fam, g) :
         res[g[i]-1, int(round(np.mean(fam[i].mito)*10))] += 1
     return(res)
 
-def print_family_table(fam, g, filename, prefix="", add = True) :
+def print_family_table(fam, g, filename, prefix="", add = True, doubling_time=1.5) :
     """ Print comma-separated essentials of simulation results to a file
 
     Parameter
@@ -313,7 +313,7 @@ def print_family_table(fam, g, filename, prefix="", add = True) :
         if fam[i].id not in birthgen :
             birthgen[fam[i].id] = g[i]
         outf.write(
-            str(g[i] * 1.5) # time
+            str(g[i] * doubling_time) # time
             + ',' 
             + str(prefix) + str(fam[i].id) # Cell_ID
             + ',' 
@@ -321,9 +321,9 @@ def print_family_table(fam, g, filename, prefix="", add = True) :
             + ',' 
             + str(np.mean(fam[i].mito)) # h
             + ',' 
-            + str(birthgen[fam[i].id]*1.5) # time_start
+            + str(birthgen[fam[i].id]*doubling_time) # time_start
             + ',' 
-            + str((g[i] - birthgen[fam[i].id])*1.5) + '\n' # time_alive
+            + str((g[i] - birthgen[fam[i].id])*doubling_time) + '\n' # time_alive
         )
     outf.close()
 

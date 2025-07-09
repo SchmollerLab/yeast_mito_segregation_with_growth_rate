@@ -21,13 +21,13 @@ df_filepath = os.path.join(tables_path, table_basename)
 df = pd.read_csv(df_filepath)
 
 data = df.groupby(
-    ['growth_rate' , 'simulation_index', 'time']
+    ['growth_rate_ratio' , 'simulation_index', 'time']
 ).agg(mean_h=('h', 'mean')).reset_index()
 
 sns.boxplot(
     data=data, 
     x='time',
     y='mean_h',
-    hue='growth_rate'
+    hue='growth_rate_ratio'
 )
 plt.show()
