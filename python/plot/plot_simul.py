@@ -6,23 +6,43 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-cwd_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-tables_path = os.path.join(cwd_path, 'segregation_simulator', 'tables_out')
+from scipy.stats import ks_2samp
 
-nuc = np.zeros(32, dtype=int) # 1, 0, 1, 0, etc. 
-nuc[::2] = 1
-nuc = tuple(nuc)
-nuc_format = ''.join([str(n) for n in nuc])
+from python.segregation_simulator import (
+    other_strain_growth_rate,
+    wt_doubling_time,
+    startbud,
+    ngen,
+    ndau,
+    nspl,
+    number_simulations,
+    number_of_cells,
+    tables_path
+)
 
-table_basename = f'start_cell_{nuc_format}.csv'
+from python.segregation_simulator.utils import (
+    get_cell_inital_state, 
+    get_table_filenames, 
+    get_single_cells_filename
+)
 
-df_filepath = os.path.join(tables_path, table_basename)
+start_cell_type = '11...00' # '11...00', '1010...'
+
+nuc, nuc_format = get_cell_inital_state(start_cell_type)
+table_basename, table_filename, single_cells_filename = get_table_filenames(
+    nuc_format, number_of_cells
+)
+
+df_filepath = os.path.join(tables_path, table_filename)
 
 df = pd.read_csv(df_filepath)
 
 data = df.groupby(
     ['growth_rate_ratio' , 'simulation_index', 'time']
-).agg(mean_h=('h', 'mean')).reset_index()
+).agg(mean_h=('mean_h', 'mean')).reset_index()
+
+last_timepoint = data['time'].max()
+data_last_timepoint = data[data['time'] == last_timepoint]
 
 sns.boxplot(
     data=data, 

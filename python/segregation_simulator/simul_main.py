@@ -8,74 +8,128 @@ import pandas as pd
 from yeast_mito_sim import (
     cell, 
     family_simulator, 
-    print_family_table
+    print_family_table, 
+    get_family_table
+)
+from python.segregation_simulator import (
+    other_strain_growth_rate,
+    wt_doubling_time,
+    startbud,
+    ngen,
+    ndau,
+    nspl,
+    number_simulations,
+    number_of_cells,
+    tables_path,
+    df_post_growth_mating_filepath
+)
+from python.segregation_simulator.utils import (
+    get_cell_inital_state, 
+    get_table_filenames, 
+    get_single_cells_filename,
+    calc_growth_rate_ratios
 )
 
-cwd_path = os.path.dirname(os.path.abspath(__file__))
-tables_path = os.path.join(cwd_path, 'tables_out')
+STRAINS_TO_SIMUL = (
+    'atp6'
+)
 
-number_simulations = 100
+# start_cell_type = '1010...' # '11...00', '1010...'
+growth_rate_ratios_mapper = calc_growth_rate_ratios(df_post_growth_mating_filepath)
 
-nuc = np.zeros(32, dtype=int) # 1, 0, 1, 0, etc. 
-nuc[::2] = 1
-nuc = tuple(nuc)
-nuc_format = ''.join([str(n) for n in nuc])
+growth_rate_ratios_to_simul_mapper = {}
+for strain_to_simul in STRAINS_TO_SIMUL:
+    growth_rate_ratio_strain_to_simul_mapper = {
+        strain: value for strain, value in growth_rate_ratios_mapper.items()
+        if strain.endswith(strain_to_simul)
+    }
+    growth_rate_ratios_to_simul_mapper = {
+        **growth_rate_ratios_to_simul_mapper, 
+        **growth_rate_ratio_strain_to_simul_mapper
+    }
 
-other_strain_growth_rate = 0.9314
-wt_doubling_time = 1.48369631
-startbud = 32
-ngen = 14
-ndau = 14
-nspl = 4
+growth_rate_ratios_to_simul_mapper['WT and WT'] = 1.0
 
-table_basename = f'start_cell_{nuc_format}.csv'
+pbar_cell_type = tqdm(total=2, ncols=100, desc='Start cell')
+for start_cell_type in ('1010...', '11...00'):
+    nuc, nuc_format = get_cell_inital_state(start_cell_type)
+    table_basename, table_filename, single_cells_filename = get_table_filenames(
+        nuc_format, number_of_cells
+    )
 
-dfs = {}
+    example_cell_filepath = os.path.join(tables_path, single_cells_filename)
 
-for growth_rate_ratio in (1.0, other_strain_growth_rate):
-    pbar = tqdm(total=number_simulations, ncols=100)
-    for n in range(number_simulations):
-        start_cell = cell(
-            nuc, 
-            -1, 
-            startbud=startbud, 
-            nspl=nspl, 
-            ndau=ndau, 
-            maxnaddexp=0
-        )
-        f, g = family_simulator(
-            start_cell, ngen, 
-            other_strain_growth_rate=growth_rate_ratio
-        )
-        
-        table_filename = f'{n}_{table_basename}'
-        table_out_filepath = os.path.join(
-            tables_path, table_filename
-        )
-        
-        print_family_table(
-            f, g, table_out_filepath, add=False, 
-            doubling_time=wt_doubling_time
-        )
-        
-        df = pd.read_csv(table_out_filepath, index_col='time')
-
-        df['nspl'] = nspl
-        df['ndau'] = ndau
-        df['ngen'] = ngen
-        df['startbud'] = startbud
-        df['growth_rate_ratio'] = growth_rate_ratio
-
-        dfs[(growth_rate_ratio, n)] = df
-        
-        os.remove(table_out_filepath)
-        
-        pbar.update()
-
-    pbar.close()
+    hdf_store_cells = pd.HDFStore(example_cell_filepath, mode='w')
     
-final_df = pd.concat(dfs, names=['growth_rate_ratio', 'simulation_index'])
-final_table_out_filepath = os.path.join(tables_path, table_basename)
-final_df.to_csv(final_table_out_filepath)
-    
+    dfs = {}
+
+    pbar_strains = tqdm(total=len(growth_rate_ratios_to_simul_mapper), ncols=100, leave=False, desc='Strain')
+    for strain, growth_rate_ratio in growth_rate_ratios_to_simul_mapper.items():
+        pbar_simul = tqdm(total=number_simulations, ncols=100, leave=False, desc='Simul ')
+        for s in range(number_simulations):
+            pbar_cells = tqdm(total=number_of_cells, ncols=100, leave=False, desc='Cells ')
+            df_cells = {}
+            for c in range(number_of_cells):
+                start_cell = cell(
+                    nuc, 
+                    -1, 
+                    startbud=startbud, 
+                    nspl=nspl, 
+                    ndau=ndau, 
+                    maxnaddexp=0
+                )
+                f, g = family_simulator(
+                    start_cell, ngen, 
+                    other_strain_growth_rate=growth_rate_ratio,
+                    start_cell_id=0
+                )
+
+                df_cell = get_family_table(
+                    f, g, doubling_time=wt_doubling_time, 
+                    index_col='time'
+                )
+                
+                df_cells[c] = df_cell
+                
+                cell_key = (
+                    f's{s}_c{c}_{strain}'
+                    .replace(' ', '_')
+                    .replace('∆', 'D')
+                    .replace('(ic)', 'ic')
+                )
+                
+                hdf_store_cells[cell_key] = df_cell
+
+                pbar_cells.update()
+
+            pbar_cells.close()
+            df_cells = pd.concat(df_cells, names=['cell_idx']).reset_index()
+            
+            df_colony = df_cells.groupby('time').agg(mean_h=('h', 'mean'))
+            
+            df_colony['nspl'] = nspl
+            df_colony['ndau'] = ndau
+            df_colony['ngen'] = ngen
+            df_colony['startbud'] = startbud
+            df_colony['growth_rate_ratio'] = growth_rate_ratio
+            
+            dfs[(growth_rate_ratio, s)] = df_colony
+            
+            pbar_simul.update()
+        
+        pbar_simul.close()
+        pbar_strains.update()
+
+    pbar_strains.close()
+
+    final_df = pd.concat(dfs, names=['growth_rate_ratio', 'simulation_index'])
+    final_table_out_filepath = os.path.join(
+        tables_path, table_filename
+    )
+    final_df.to_csv(final_table_out_filepath)
+
+    hdf_store_cells.close()
+    pbar_cell_type.update()
+
+pbar_cell_type.close()
     

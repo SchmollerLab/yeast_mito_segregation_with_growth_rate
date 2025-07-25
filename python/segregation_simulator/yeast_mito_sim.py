@@ -14,8 +14,9 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-
+from collections import defaultdict
 import numpy as np
+import pandas as pd
 import matplotlib
 ## matplotlib.use('gtk3cairo')
 import matplotlib.pyplot as plt
@@ -145,6 +146,9 @@ def determine_if_should_have_daughter(current_cell, p_have_daughter=1):
     int
         0 for no daughter, 1 for yes daughter
     """    
+    if p_have_daughter >= 1:
+        return 1
+    
     p_choice = (1-p_have_daughter, p_have_daughter)
     does_have_daughter = rng.choice((0, 1), p=p_choice)
     return does_have_daughter
@@ -169,20 +173,28 @@ def calculate_p_have_daughter(current_cell, other_strain_growth_rate):
     -----
     The probability to have a daughter is calculated with linear interpolation 
     between (0, 1) for the WT and (1, other_strain_growth_rate) for the 
-    other strain. The status of the current cell is determined as the mean 
+    other strain. The probability to have a daughter is then calculated as the 
+    fraction of dividing cells compared to WT. 
+    The status of the current cell is determined as the mean 
     of the current mito distribution of 0s and 1s
     
     """    
     mutant_ratio = np.mean(current_cell.mito)
     gr_mut = other_strain_growth_rate
-    mr = mutant_ratio
+    x = mutant_ratio
+    q = 1.0
+    m = gr_mut-1
     
-    p_have_daughter = 1 - (mr*(1-gr_mut))
+    # Linear interpolation between (0, 1) for WT and (1, gr_mut) for mutant
+    gr_current = m*x + q
+    fract_div_cells_mut = np.power(2, gr_current) - 1
+    
+    p_have_daughter = fract_div_cells_mut
+    
     return p_have_daughter
-    
 
 def generation_simulator(
-        cell_family, other_strain_growth_rate=0.5
+        cell_family, other_strain_growth_rate=1.0
     ):
     """simulate reproduction of one generation of yeast
 
@@ -190,7 +202,8 @@ def generation_simulator(
     ----------
     cell_family : Tuple
         the tuple of cells of the parental generation
-    
+    other_strain_growth_rate : float, optional
+        Growth rate ratio of the other strain compared to WT, by default 1.0
     
     Returns
     -------
@@ -219,7 +232,7 @@ def generation_simulator(
         
     return(tuple(cfl))
 
-def family_simulator(cell, ngen, other_strain_growth_rate=0.5) :
+def family_simulator(cell, ngen, start_cell_id=0, other_strain_growth_rate=1.0) :
     """ simulate reproduction of one generation of yeast
 
     Paramter
@@ -233,7 +246,7 @@ def family_simulator(cell, ngen, other_strain_growth_rate=0.5) :
     """
     cell.grow()
     p = (cell,)
-    g = (0, )
+    g = (start_cell_id, )
     fam = copy.deepcopy(p)
     for i in range(ngen):
         f = generation_simulator(
@@ -327,6 +340,36 @@ def print_family_table(fam, g, filename, prefix="", add = True, doubling_time=1.
         )
     outf.close()
 
+def get_family_table(fam, g, prefix="", doubling_time=1.5, index_col='') :
+    """ Print comma-separated essentials of simulation results to a file
+
+    Parameter
+    ---------
+    fam:      the simulated family
+    g:        tuple of generation numbers for each entry of fam
+    prefix:   prefix to be used to make cell ids unique when
+              results of several simulations are combined in a file
+    """
+    birthgen = {}
+    df_data = defaultdict(list)
+    
+    for i in range(len(fam)) :
+        if fam[i].id not in birthgen :
+            birthgen[fam[i].id] = g[i]
+        
+        df_data['time'].append(g[i] * doubling_time)
+        df_data['Cell_ID'].append(f'{prefix}{fam[i].id}')
+        df_data['Mother'].append(f'{prefix}{fam[i].mother}')
+        df_data['h'].append(np.mean(fam[i].mito))
+        df_data['time_start'].append(birthgen[fam[i].id]*doubling_time)
+        df_data['time_alive'].append((g[i] - birthgen[fam[i].id])*doubling_time)
+        
+    df = pd.DataFrame(df_data)
+    if not index_col:
+        return df
+    
+    df = df.set_index(index_col)
+    return df
 
 def plot_freq_spect(frsp) :
     """Plots generation-wise frequency spectra

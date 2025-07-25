@@ -1,0 +1,7 @@
+COPYING
+README.md
+pyproject.toml
+yeast_mito_simul.egg-info/PKG-INFO
+yeast_mito_simul.egg-info/SOURCES.txt
+yeast_mito_simul.egg-info/dependency_links.txt
+yeast_mito_simul.egg-info/top_level.txt

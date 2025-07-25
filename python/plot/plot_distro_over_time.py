@@ -6,25 +6,45 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from python.segregation_simulator import (
+    other_strain_growth_rate,
+    wt_doubling_time,
+    startbud,
+    ngen,
+    ndau,
+    nspl,
+    number_simulations,
+    number_of_cells,
+)
+
+from python.segregation_simulator.utils import (
+    get_cell_inital_state, 
+    get_table_filenames, 
+    get_single_cells_filename
+)
+
+start_cell_type = '11...00' # '11...00', '1010...'
+
 cwd_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tables_path = os.path.join(cwd_path, 'segregation_simulator', 'tables_out')
 
-nuc = np.zeros(32, dtype=int) # 1, 0, 1, 0, etc. 
-nuc[::2] = 1
-nuc = tuple(nuc)
-nuc_format = ''.join([str(n) for n in nuc])
-
-table_basename = f'start_cell_{nuc_format}.csv'
-
-df_filepath = os.path.join(tables_path, table_basename)
-
-df = pd.read_csv(df_filepath)
+nuc, nuc_format = get_cell_inital_state(start_cell_type)
+table_basename, table_filename, single_cells_filename = get_table_filenames(
+    nuc_format, number_of_cells
+)
 
 ncols = 4
 nrows = 4
 
-for growth_rate_ratio in df['growth_rate_ratio'].unique():
-    df_grr = df[df['growth_rate_ratio'] == growth_rate_ratio].copy()
+for growth_rate_ratio in (1.0, other_strain_growth_rate):
+    df_cell_filename = get_single_cells_filename(
+        single_cells_filename, growth_rate_ratio, 0, 0
+    )
+
+    df_filepath = os.path.join(tables_path, df_cell_filename)
+
+    df_grr = pd.read_csv(df_filepath)
+
     fig, ax = plt.subplots(nrows, ncols, figsize=(12, 10))
     ax = ax.flatten()
     for i, time_i in enumerate(df_grr['time'].unique()):
