@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import ks_2samp
 
 from python.segregation_simulator import (
-    other_strain_growth_rate,
     wt_doubling_time,
     startbud,
     ngen,
@@ -26,12 +25,14 @@ from python.segregation_simulator.utils import (
     get_single_cells_filename
 )
 
-start_cell_type = '1010...' # '11...00', '1010...'
+start_cell_type = '00...11' # '11...00', '1010...', '00...11
 
 nuc, nuc_format = get_cell_inital_state(start_cell_type)
 table_basename, table_filename, single_cells_filename = get_table_filenames(
-    nuc_format, number_of_cells
+    nuc_format, number_of_cells, number_simulations=number_simulations
 )
+
+print(f'Loading table {table_filename}')
 
 df_filepath = os.path.join(tables_path, table_filename)
 
@@ -45,6 +46,11 @@ data['time'] = data['time'].round(2)
 
 last_timepoint = data['time'].max()
 data_last_timepoint = data[data['time'] == last_timepoint]
+
+print('-'*100)
+print('Groups statistics:')
+print(data.groupby(['time', 'growth_rate_ratio']).describe())
+print('-'*100)
 
 fig, ax = plt.subplots(figsize=(10, 6))
 

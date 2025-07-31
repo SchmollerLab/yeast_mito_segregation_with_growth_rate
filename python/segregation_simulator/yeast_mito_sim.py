@@ -95,8 +95,12 @@ class cell:
         list of the fragments.
         """
         if self.nspl==1 :
-            return([self.mito])
-        split = rng.permutation(np.repeat((0,1), (len(self.mito) - min(self.nspl, len(self.mito)), min(self.nspl, len(self.mito)))))
+            return [self.mito]
+        
+        min_nspl = min(self.nspl, len(self.mito)) 
+        split_right = len(self.mito) - min_nspl  
+        to_permute =  np.repeat((0,1), (len(self.mito) - min_nspl, min_nspl))
+        split = rng.permutation(to_permute)
         a = 0
         b = 0
         i = 0
@@ -107,7 +111,8 @@ class cell:
                 mitolist.append(self.mito[a:b])
                 a = b
             i += 1
-        return(mitolist)
+        
+        return mitolist
 
     def have_daughter(self):
         """ the cell first grows and then splits into nspl pieces half of which are passed on to daughter
@@ -124,10 +129,29 @@ class cell:
         perm = rng.permutation(range(len(spm)))
         ml = [spm[i] for i in perm]
         self.mito = list(np.concatenate(ml, axis=0))
+        mito_before_division = self.mito.copy()
+        # # Here it should probably be random if the daughter gets the first 
+        # # half or the second half of the mito
+        # inherit_first_half = rng.choice((0, 1))
+        # if inherit_first_half:
+        #     daumito = self.mito[0:self.ndau]
+        #     self.mito = self.mito[self.ndau:self.maxn]
+        # else:
+        #     daumito = self.mito[-self.ndau:]
+        #     self.mito = self.mito[0:self.maxn-self.ndau]
         daumito = self.mito[0:self.ndau]
         self.mito = self.mito[self.ndau:self.maxn]
         self.maxn = self.startbud + rng.geometric(1/(self.maxnaddexp+1))-1
-        return(cell(daumito, self.id, self.startbud, self.nspl, self.ndau, self.simulrep, self.maxnaddexp))
+        new_cell = cell(
+            daumito, 
+            self.id, 
+            startbud=self.startbud, 
+            nspl=self.nspl, 
+            ndau=self.ndau, 
+            simulrep=self.simulrep, 
+            maxnaddexp=self.maxnaddexp
+        )
+        return new_cell
 
 def determine_if_should_have_daughter(current_cell, p_have_daughter=1):
     """_summary_
@@ -230,7 +254,7 @@ def generation_simulator(
         cfl[k].set_id(k)
         cfl[k].grow()
         
-    return(tuple(cfl))
+    return tuple(cfl)
 
 def family_simulator(cell, ngen, start_cell_id=0, other_strain_growth_rate=1.0) :
     """ simulate reproduction of one generation of yeast

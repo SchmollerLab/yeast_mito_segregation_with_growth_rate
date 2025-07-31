@@ -12,7 +12,7 @@ from yeast_mito_sim import (
     get_family_table
 )
 from python.segregation_simulator import (
-    other_strain_growth_rate,
+    # other_strain_growth_rate,
     wt_doubling_time,
     startbud,
     ngen,
@@ -32,6 +32,24 @@ from python.segregation_simulator.utils import (
 STRAINS_TO_SIMUL = (
     'atp6'
 )
+while True:
+    answer = input(
+        'Do you want to save the data? [y/n] '
+    )
+    if answer.lower() == 'q':
+        exit()
+        
+    if answer.lower() == 'y':
+        SAVE = True
+        break
+    elif answer.lower() == 'n':
+        SAVE = False
+        break
+    else:
+        print(f'{answer} is not a valid answer. Please enter "y" or "n".')
+
+start_cell_types = ('00...11',) 
+# start_cell_types = ('00...11', '11...00', '1010..')
 
 # start_cell_type = '1010...' # '11...00', '1010...'
 growth_rate_ratios_mapper = calc_growth_rate_ratios(df_post_growth_mating_filepath)
@@ -47,26 +65,53 @@ for strain_to_simul in STRAINS_TO_SIMUL:
         **growth_rate_ratio_strain_to_simul_mapper
     }
 
-growth_rate_ratios_to_simul_mapper['WT and WT'] = 1.0
+growth_rate_ratios_to_simul_mapper = {
+    'WT and WT': 1.0,
+    **growth_rate_ratios_to_simul_mapper
+}
 
-pbar_cell_type = tqdm(total=2, ncols=100, desc='Start cell')
-for start_cell_type in ('1010...', '11...00'):
+pbar_cell_type = tqdm(
+    total=len(start_cell_types), 
+    ncols=100, 
+    desc='Start cell', 
+    position=0
+)
+for start_cell_type in start_cell_types:
     nuc, nuc_format = get_cell_inital_state(start_cell_type)
     table_basename, table_filename, single_cells_filename = get_table_filenames(
-        nuc_format, number_of_cells
+        nuc_format, number_of_cells, number_simulations=number_simulations
     )
 
     example_cell_filepath = os.path.join(tables_path, single_cells_filename)
-
-    hdf_store_cells = pd.HDFStore(example_cell_filepath, mode='w')
+    
+    if SAVE:
+        hdf_store_cells = pd.HDFStore(example_cell_filepath, mode='w')
     
     dfs = {}
 
-    pbar_strains = tqdm(total=len(growth_rate_ratios_to_simul_mapper), ncols=100, leave=False, desc='Strain')
+    pbar_strains = tqdm(
+        total=len(growth_rate_ratios_to_simul_mapper), 
+        ncols=100, 
+        leave=False, 
+        desc='Strain',
+        position=1
+    )
     for strain, growth_rate_ratio in growth_rate_ratios_to_simul_mapper.items():
-        pbar_simul = tqdm(total=number_simulations, ncols=100, leave=False, desc='Simul ')
+        pbar_simul = tqdm(
+            total=number_simulations, 
+            ncols=100, 
+            leave=False, 
+            desc='Simul ',
+            position=2
+        )
         for s in range(number_simulations):
-            pbar_cells = tqdm(total=number_of_cells, ncols=100, leave=False, desc='Cells ')
+            pbar_cells = tqdm(
+                total=number_of_cells, 
+                ncols=100, 
+                leave=False, 
+                desc='Cells ',
+                position=3
+            )
             df_cells = {}
             for c in range(number_of_cells):
                 start_cell = cell(
@@ -97,7 +142,8 @@ for start_cell_type in ('1010...', '11...00'):
                     .replace('(ic)', 'ic')
                 )
                 
-                hdf_store_cells[cell_key] = df_cell
+                if SAVE:
+                    hdf_store_cells[cell_key] = df_cell
 
                 pbar_cells.update()
 
@@ -125,9 +171,11 @@ for start_cell_type in ('1010...', '11...00'):
     final_table_out_filepath = os.path.join(
         tables_path, table_filename
     )
-    final_df.to_csv(final_table_out_filepath)
+    if SAVE:
+        final_df.to_csv(final_table_out_filepath)
 
-    hdf_store_cells.close()
+    if SAVE:
+        hdf_store_cells.close()
     pbar_cell_type.update()
 
 pbar_cell_type.close()
