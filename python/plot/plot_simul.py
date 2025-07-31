@@ -26,7 +26,7 @@ from python.segregation_simulator.utils import (
     get_single_cells_filename
 )
 
-start_cell_type = '11...00' # '11...00', '1010...'
+start_cell_type = '1010...' # '11...00', '1010...'
 
 nuc, nuc_format = get_cell_inital_state(start_cell_type)
 table_basename, table_filename, single_cells_filename = get_table_filenames(
@@ -41,8 +41,12 @@ data = df.groupby(
     ['growth_rate_ratio' , 'simulation_index', 'time']
 ).agg(mean_h=('mean_h', 'mean')).reset_index()
 
+data['time'] = data['time'].round(2)
+
 last_timepoint = data['time'].max()
 data_last_timepoint = data[data['time'] == last_timepoint]
+
+fig, ax = plt.subplots(figsize=(10, 6))
 
 sns.boxplot(
     data=data, 
@@ -50,4 +54,6 @@ sns.boxplot(
     y='mean_h',
     hue='growth_rate_ratio'
 )
+fig.suptitle(f'Start cell = {start_cell_type}')
+
 plt.show()

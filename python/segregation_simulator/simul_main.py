@@ -26,7 +26,6 @@ from python.segregation_simulator import (
 from python.segregation_simulator.utils import (
     get_cell_inital_state, 
     get_table_filenames, 
-    get_single_cells_filename,
     calc_growth_rate_ratios
 )
 
