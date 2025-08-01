@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 cwd_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tables_path = os.path.join(cwd_path, 'segregation_simulator', 'tables_out')
 experimental_data_path = os.path.join(cwd_path, 'experimental_data')
@@ -16,4 +18,4 @@ nspl = 5
 number_simulations = 10
 number_of_cells = 10
 
-growth_rate_wt_atp6_neongreen = 0.46718
+growth_rate_wt_atp6_neongreen = np.log(2)/wt_doubling_time # 0.46718
