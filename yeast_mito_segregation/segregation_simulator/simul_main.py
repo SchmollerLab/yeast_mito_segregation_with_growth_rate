@@ -139,6 +139,8 @@ for start_cell_type in start_cell_types:
                 except Exception as err:
                     num_cells = number_of_cells
             
+            import pdb; pdb.set_trace()
+
             mtdna_ratio = mtdna_ratio_row.value
             
             pbar_simul = tqdm(

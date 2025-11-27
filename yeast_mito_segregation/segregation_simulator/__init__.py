@@ -13,6 +13,8 @@ df_mtdna_ratio_test_data_filepath  = os.path.join(
     experimental_data_path, 'mtDNA_ratio_test_data.csv'
 )
 
+os.makedirs(tables_path, exist_ok=True)
+
 # other_strain_growth_rate = 0.9314
 wt_doubling_time = 1.48369631
 startbud = 32
@@ -25,9 +27,9 @@ number_of_cells = 5
 # If False, `number_simulations` and `number_of_cells` are ignored and the
 # values from the experimental data file are used 
 # (see "yeast_mito_segregation\experimental_data\mtDNA_ratio_test_data.csv").
-force_number_of_runs = True
+force_number_of_runs = False
 
 # Append this text to the end of the table filenames
-table_endname = 'low_number_simulations'
+table_endname = 'final'
 
 growth_rate_wt_atp6_neongreen = np.log(2)/wt_doubling_time # 0.46718
