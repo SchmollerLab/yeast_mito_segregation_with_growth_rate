@@ -7,4 +7,4 @@ name = "yeast_mito_simul"
 version = "2.0"
 
 [tool.setuptools]
-packages = ["python"] 
+packages = ["yeast_mito_segregation"] 

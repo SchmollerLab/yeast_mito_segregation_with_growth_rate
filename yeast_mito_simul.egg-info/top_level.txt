@@ -1,1 +1,1 @@
-python
+yeast_mito_segregation

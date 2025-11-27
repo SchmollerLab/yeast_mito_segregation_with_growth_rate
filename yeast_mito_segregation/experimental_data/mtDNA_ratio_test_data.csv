@@ -1,0 +1,46 @@
+strain,value,number_simulations,number_of_cells
+WT and WT,1.0,100,30
+WT and WT,0.9,10,30
+WT and WT,0.8,10,30
+WT and WT,0.7,10,30
+WT and WT,0.6,10,30
+WT and WT,0.5,10,30
+WT and WT,0.4,10,30
+WT and WT,0.3,10,30
+WT and WT,0.2,10,30
+WT and WT,0.1,10,30
+WT (ic) and ∆atp6,0.71,100,30
+WT (ic) and ∆atp6,1.0,10,30
+WT (ic) and ∆atp6,0.9,10,30
+WT (ic) and ∆atp6,0.8,10,30
+WT (ic) and ∆atp6,0.7,10,30
+WT (ic) and ∆atp6,0.6,10,30
+WT (ic) and ∆atp6,0.5,10,30
+WT (ic) and ∆atp6,0.4,10,30
+WT (ic) and ∆atp6,0.3,10,30
+WT (ic) and ∆atp6,0.2,10,30
+WT (ic) and ∆atp6,0.1,10,30
+WT (ic) and ∆cob,1.07,100,30
+WT (ic) and ∆cob,1.0,10,30
+WT (ic) and ∆cob,0.9,10,30
+WT (ic) and ∆cob,0.8,10,30
+WT (ic) and ∆cob,0.7,10,30
+WT (ic) and ∆cob,0.6,10,30
+WT (ic) and ∆cob,0.5,10,30
+WT (ic) and ∆cob,0.4,10,30
+WT (ic) and ∆cob,0.3,10,30
+WT (ic) and ∆cob,0.2,10,30
+WT (ic) and ∆cob,0.1,10,30
+WT (ic) and ∆cox2,0.71,100,30
+WT (ic) and ∆cox2,1.0,10,30
+WT (ic) and ∆cox2,0.9,10,30
+WT (ic) and ∆cox2,0.8,10,30
+WT (ic) and ∆cox2,0.7,10,30
+WT (ic) and ∆cox2,0.6,10,30
+WT (ic) and ∆cox2,0.5,10,30
+WT (ic) and ∆cox2,0.4,10,30
+WT (ic) and ∆cox2,0.3,10,30
+WT (ic) and ∆cox2,0.2,10,30
+WT (ic) and ∆cox2,0.1,10,30
+WT (ic) and WT (ic),0.93,100,30
+WT (ic) and WT (il),1.31,100,30

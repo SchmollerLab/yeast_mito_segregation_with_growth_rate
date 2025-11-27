@@ -6,7 +6,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from python.segregation_simulator import (
+from yeast_mito_segregation.segregation_simulator import (
     wt_doubling_time,
     startbud,
     ngen,
@@ -16,7 +16,7 @@ from python.segregation_simulator import (
     number_of_cells,
 )
 
-from python.segregation_simulator.utils import (
+from yeast_mito_segregation.segregation_simulator.utils import (
     get_cell_inital_state, 
     get_table_filenames, 
     get_single_cells_filename
