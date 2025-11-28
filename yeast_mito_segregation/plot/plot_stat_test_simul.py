@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import beta, combine_pvalues
 
 from yeast_mito_segregation.segregation_simulator import (
-    table_endname, tables_path, df_post_growth_mating_filepath
+    table_endname, tables_path, df_post_growth_mating_filepath,
+    df_fast_filepath
 )
     
 
@@ -90,13 +91,17 @@ df_simul_strain_last_timepoint = (
         [df_simul_strain_last_timepoint['mtdna_ratio'] == mtDNA_RATIO]
 )
 
-df_exp = pd.read_csv(df_post_growth_mating_filepath, index_col='Strain')
+df_exp = pd.read_csv(df_fast_filepath, index_col='Mating')
 
 sim_percents = df_simul_strain_last_timepoint['mean_h'].values
-experimental_percents = df_exp.loc[STRAIN]['Ratio'].values/100
+experimental_percents = (
+    df_exp.loc[STRAIN.replace('and', 'x')]['Ratio'].values/100
+)
 p_values = []
 
 print(sim_percents.min(), sim_percents.max())
+
+experimental_percents = [experimental_percents.mean()]
 
 for obs_percent in experimental_percents:
     # Compute one-sided p-value for 'less' (obs smaller than simulated -> selection against)
