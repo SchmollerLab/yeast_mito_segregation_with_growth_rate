@@ -1,4 +1,4 @@
-tables_out
+*.h5
 
 # Ignore macOS files
 .DS_Store

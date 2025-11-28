@@ -41,22 +41,22 @@ df_filepath = os.path.join(tables_path, table_filename)
 df = pd.read_csv(df_filepath)
 
 df = df.groupby(
-    ['growth_rate_ratio' , 'mtdna_ratio', 'simulation_index', 'time']
+    ['strain', 'growth_rate_ratio' , 'mtdna_ratio', 'simulation_index', 'time']
 ).agg(mean_h=('mean_h', 'mean')).reset_index()
 
 df['time'] = df['time'].round(1)
 
-df_WT = df[df['growth_rate_ratio'] == 1.0]
+df_WT = df[df['strain'] == 'WT and WT']
 df_WT_ratio_one = df_WT[df_WT['mtdna_ratio'] == 1.0]
 
-growth_rate_ratios = df['growth_rate_ratio'].unique()
+strains = df['strain'].unique()
 
-for growth_rate_ratio in growth_rate_ratios:
-    if growth_rate_ratio == 1.0:
+for strain in strains:
+    if strain == 'WT and WT':
         continue
 
-    df_growth_rate = df[df['growth_rate_ratio'] == growth_rate_ratio]
-    mtDNA_ratios = df_growth_rate['mtdna_ratio'].unique()
+    df_strain = df[df['strain'] == strain]
+    mtDNA_ratios = df_strain['mtdna_ratio'].unique()
     
     num_cols = (
         len(mtDNA_ratios) // num_rows + int(len(mtDNA_ratios) % num_rows > 0)
@@ -81,10 +81,10 @@ for growth_rate_ratio in growth_rate_ratios:
         )
     
     for a, mtDNA_ratio in enumerate(mtDNA_ratios):
-        df_growth_rate_ratio = df_growth_rate[
-            df_growth_rate['mtdna_ratio'] == mtDNA_ratio
+        df_strain_ratio = df_strain[
+            df_strain['mtdna_ratio'] == mtDNA_ratio
         ]
-        data = pd.concat([df_WT_ratio_one, df_growth_rate_ratio])
+        data = pd.concat([df_WT_ratio_one, df_strain_ratio])
         
         # print('-'*100)
         # print('Groups statistics:')
@@ -96,8 +96,9 @@ for growth_rate_ratio in growth_rate_ratios:
             data=data, 
             x='time',
             y='mean_h',
-            hue='growth_rate_ratio',
-            ax=axes
+            hue='strain',
+            ax=axes,
+            legend=a==0
         )
         axes.set_title(
             f'mtDNA ratio = {mtDNA_ratio}'
