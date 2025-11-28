@@ -8,6 +8,9 @@ experimental_data_path = os.path.join(cwd_path, 'experimental_data')
 df_post_growth_mating_filepath = os.path.join(
     experimental_data_path, 'PostGrowthMatingAssayWT.csv'
 )
+df_fast_filepath = os.path.join(
+    experimental_data_path, 'FAST_WT.csv'
+)
 df_qpcr_data_filepath = os.path.join( experimental_data_path, 'qPCR_values.csv')
 df_mtdna_ratio_test_data_filepath  = os.path.join(
     experimental_data_path, 'mtDNA_ratio_test_data.csv'
