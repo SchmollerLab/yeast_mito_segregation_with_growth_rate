@@ -1,4 +1,5 @@
 *.h5
+_deprecated
 
 # Ignore macOS files
 .DS_Store
