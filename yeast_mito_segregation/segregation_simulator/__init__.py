@@ -16,7 +16,7 @@ df_mtdna_ratio_test_data_filepath  = os.path.join(
 os.makedirs(tables_path, exist_ok=True)
 
 # other_strain_growth_rate = 0.9314
-wt_doubling_time = 1.48369631
+wt_doubling_time = 1.48369631 # Measured, see manuscript (search "1.48")
 startbud = 32
 ngen = 14
 ndau = 11

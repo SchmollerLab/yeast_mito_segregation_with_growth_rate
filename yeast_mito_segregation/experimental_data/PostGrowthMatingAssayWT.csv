@@ -14,3 +14,21 @@
 12,WT (ic) and ∆cox2,56.133979015334944,rep1
 13,WT (ic) and ∆cox2,48.9091831557585,rep2
 14,WT (ic) and ∆cox2,37.64551067921855,rep3
+1,∆cox4 and ∆cox4∆atp6,57.55208333333334,rep1
+2,∆cox4 and ∆cox4∆atp6,30.95166010697346,rep2
+3,∆cox4 and ∆cox4∆atp6,27.187594401369447,rep3
+10,∆cox4 and ∆cox4∆cob,57.29062060654752,rep1
+11,∆cox4 and ∆cox4∆cob,62.12958312405825,rep2
+12,∆cox4 and ∆cox4∆cob,52.75371287128713,rep3
+0,∆cox4 and ∆cox4∆cox2,48.73501997336884,rep3
+13,∆cox4 and ∆cox4∆cox2,46.120865659452837,rep1
+14,∆cox4 and ∆cox4∆cox2,62.33211233211233,rep2
+9,∆rip1 and ∆rip1∆atp6,23.233135618779532,rep1
+10,∆rip1 and ∆rip1∆atp6,18.567985539264917,rep2
+13,∆rip1 and ∆rip1∆atp6,15.56919642857143,rep3
+0,∆rip1 and ∆rip1∆cob,68.51127819548872,rep1
+11,∆rip1 and ∆rip1∆cob,53.61548490622806,rep2
+12,∆rip1 and ∆rip1∆cob,50.43138041733547,rep3
+1,∆rip1 and ∆rip1∆cox2,40.293113832563743,rep1
+3,∆rip1 and ∆rip1∆cox2,60.62707265601447,rep2
+5,∆rip1 and ∆rip1∆cox2,44.30812550281577,rep3

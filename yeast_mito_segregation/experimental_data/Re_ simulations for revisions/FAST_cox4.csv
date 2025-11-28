@@ -1,0 +1,16 @@
+,Strain,Ratio,Replicate
+0,WT (ic) x ∆cob,0.563961071536069,rep2
+1,WT (ic) x ∆cob,0.45547048156357045,rep3
+2,WT (ic) x ∆cob,0.6117753441173516,rep1
+3,WT (ic) x WT (ic),0.5860853805879984,rep1
+4,WT (ic) x WT (ic),0.5121334681496461,rep2
+5,WT (ic) x WT (ic),0.5432136029781668,rep3
+6,WT (ic) x WT (il),0.5597276459397217,rep1
+7,WT (ic) x WT (il),0.5099099099099099,rep2
+8,WT (ic) x WT (il),0.5751025718002601,rep3
+9,WT (ic) x ∆cox2,0.60147486497715,rep1
+10,WT (ic) x ∆cox2,0.4991828396322779,rep2
+11,WT (ic) x ∆cox2,0.44550102249488754,rep3
+12,WT (ic) x ∆atp6,0.47902027705280065,rep2
+13,WT (ic) x ∆atp6,0.3980719019883511,rep3
+14,WT (ic) x ∆atp6,0.5012566602995878,rep1

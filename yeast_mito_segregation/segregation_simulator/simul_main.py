@@ -41,11 +41,17 @@ DF_MTDNA_RATIO_FILEPATH = (
 )
 
 STRAINS_TO_SIMUL = (
-    'atp6',
-    '(ic)',
-    '(il)',
-    'cob',
-    'cox2',
+    # 'atp6',
+    # '(ic)',
+    # '(il)',
+    # 'cob',
+    # 'cox2',
+    '∆cox4∆atp6',
+    '∆cox4∆cob',
+    '∆cox4∆cox2',
+    '∆rip1∆atp6',
+    '∆rip1∆cob',
+    '∆rip1∆cox2'
 )
 while True:
     answer = input(
@@ -63,11 +69,29 @@ while True:
     else:
         print(f'{answer} is not a valid answer. Please enter "y" or "n".')
 
+while True:
+    answer = input(
+        'Do you want to concatenate to existing table? [y/n] '
+    )
+    if answer.lower() == 'q':
+        exit()
+        
+    if answer.lower() == 'y':
+        CONCAT = True
+        break
+    elif answer.lower() == 'n':
+        CONCAT = False
+        break
+    else:
+        print(f'{answer} is not a valid answer. Please enter "y" or "n".')
+
 start_cell_types = ('1010...',) 
 # start_cell_types = ('00...11', '11...00', '1010..')
 
 # start_cell_type = '1010...' # '11...00', '1010...'
 growth_rate_ratios_mapper = calc_growth_rate_ratios(df_post_growth_mating_filepath)
+
+import pdb; pdb.set_trace()
 
 mtDNA_amounts_df = pd.read_csv(DF_MTDNA_RATIO_FILEPATH, index_col='strain')
 
@@ -215,13 +239,16 @@ for start_cell_type in start_cell_types:
 
     pbar_strains.close()
 
-    final_df = pd.concat(
-        dfs, 
-        names=['strain', 'growth_rate_ratio', 'mtdna_ratio', 'simulation_index']
-    )
+    names = ['strain', 'growth_rate_ratio', 'mtdna_ratio', 'simulation_index']
+    final_df = pd.concat(dfs, names=names)
     final_table_out_filepath = os.path.join(
         tables_path, table_filename
     )
+    
+    if CONCAT and os.path.exists(final_table_out_filepath):
+        saved_df = pd.read_csv(final_table_out_filepath, index_col=names)
+        final_df = pd.concat([saved_df, final_df])
+
     if SAVE:
         final_df.to_csv(final_table_out_filepath)
 
