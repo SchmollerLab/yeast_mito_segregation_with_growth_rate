@@ -39,18 +39,20 @@ def get_single_cells_filename(single_cells_filename, growth_rate_ratio, s, c):
 
 def calc_growth_rate_ratios(df_post_growth_mating_filepath):
     df_pgm = pd.read_csv(df_post_growth_mating_filepath)
-    df_pgm['WT_growth_rate_hours'] = growth_rate_wt_atp6_neongreen
+    # df_pgm['WT_growth_rate_hours'] = growth_rate_wt_atp6_neongreen
     
     hours_exp = 20
     
+    # For 'WT_growth_rate' -->
+    # see "yeast_mito_segregation/experimental_data/add_WT_growth_rate_hours.py"
     df_pgm['growth_rate_hours'] = (
         (np.log(df_pgm['Ratio']/(100-df_pgm['Ratio'])) 
-        + hours_exp*df_pgm['WT_growth_rate_hours'])
+        + hours_exp*df_pgm['WT_growth_rate'])
         / hours_exp
     )
     
     df_pgm['growth_rate_ratio'] = (
-        df_pgm['growth_rate_hours'] / df_pgm['WT_growth_rate_hours']
+        df_pgm['growth_rate_hours'] / df_pgm['WT_growth_rate']
     )
     
     growth_rate_ratios_mean = (
