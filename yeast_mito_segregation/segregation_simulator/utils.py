@@ -46,15 +46,17 @@ def calc_growth_rate_ratios(df_post_growth_mating_filepath):
     # For 'WT_growth_rate' -->
     # see "yeast_mito_segregation/experimental_data/add_WT_growth_rate_hours.py"
     df_pgm['growth_rate_hours'] = (
-        (np.log(df_pgm['Ratio']/(100-df_pgm['Ratio'])) 
-        + hours_exp*df_pgm['WT_growth_rate'])
+        (
+            np.log(df_pgm['Ratio']/(100-df_pgm['Ratio'])) 
+            + hours_exp*df_pgm['WT_growth_rate']
+        )
         / hours_exp
     )
     
     df_pgm['growth_rate_ratio'] = (
         df_pgm['growth_rate_hours'] / df_pgm['WT_growth_rate']
     )
-    
+
     growth_rate_ratios_mean = (
         df_pgm.groupby('Strain')['growth_rate_ratio'].mean().to_dict()
     )

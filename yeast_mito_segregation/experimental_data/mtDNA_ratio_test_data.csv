@@ -44,3 +44,10 @@ WT (ic) and ∆cox2,0.2,10,30
 WT (ic) and ∆cox2,0.1,10,30
 WT (ic) and WT (ic),0.93,100,30
 WT (ic) and WT (il),1.31,100,30
+WT (ic) and WT (il),1.31,100,30
+∆cox4 and ∆cox4∆atp6,0.9932695764820846,100,30
+∆cox4 and ∆cox4∆cob,1.4268401194126064,100,30
+∆cox4 and ∆cox4∆cox2,0.8967887091864656,100,30
+∆rip1 and ∆rip1∆atp6,0.8142781176585493,100,30
+∆rip1 and ∆rip1∆cob,1.1657659918278611,100,30
+∆rip1 and ∆rip1∆cox2,0.8839176032963242,100,30

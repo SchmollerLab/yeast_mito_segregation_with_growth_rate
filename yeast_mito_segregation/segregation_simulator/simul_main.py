@@ -41,6 +41,7 @@ DF_MTDNA_RATIO_FILEPATH = (
 )
 
 STRAINS_TO_SIMUL = (
+    # 'WT',
     # 'atp6',
     # '(ic)',
     # '(il)',
@@ -91,25 +92,21 @@ start_cell_types = ('1010...',)
 # start_cell_type = '1010...' # '11...00', '1010...'
 growth_rate_ratios_mapper = calc_growth_rate_ratios(df_post_growth_mating_filepath)
 
-import pdb; pdb.set_trace()
-
 mtDNA_amounts_df = pd.read_csv(DF_MTDNA_RATIO_FILEPATH, index_col='strain')
 
 growth_rate_ratios_to_simul_mapper = {}
 for strain_to_simul in STRAINS_TO_SIMUL:
-    growth_rate_ratio_strain_to_simul_mapper = {
-        strain: value for strain, value in growth_rate_ratios_mapper.items()
-        if strain.endswith(strain_to_simul)
-    }
+    if strain_to_simul == 'WT':
+        growth_rate_ratio_strain_to_simul_mapper = {'WT and WT': 1.0}
+    else:
+        growth_rate_ratio_strain_to_simul_mapper = {
+            strain: value for strain, value in growth_rate_ratios_mapper.items()
+            if strain.endswith(strain_to_simul)
+        }
     growth_rate_ratios_to_simul_mapper = {
         **growth_rate_ratios_to_simul_mapper, 
         **growth_rate_ratio_strain_to_simul_mapper
     }
-
-growth_rate_ratios_to_simul_mapper = {
-    'WT and WT': 1.0,
-    **growth_rate_ratios_to_simul_mapper
-}
 
 pbar_cell_type = tqdm(
     total=len(start_cell_types), 
