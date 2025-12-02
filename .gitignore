@@ -1,5 +1,6 @@
 *.h5
 _deprecated
+.vscode
 
 # Ignore macOS files
 .DS_Store
