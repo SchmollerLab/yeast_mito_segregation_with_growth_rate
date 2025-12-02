@@ -219,6 +219,8 @@ for start_cell_type in start_cell_types:
                 
                 df_colony = df_cells.groupby('time').agg(mean_h=('h', 'mean'))
                 
+                import pdb; pdb.set_trace()
+                
                 df_colony['nspl'] = nspl
                 df_colony['ndau'] = ndau
                 df_colony['ngen'] = ngen
