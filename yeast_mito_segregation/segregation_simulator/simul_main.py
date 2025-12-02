@@ -47,12 +47,16 @@ STRAINS_TO_SIMUL = (
     # '(il)',
     # 'cob',
     # 'cox2',
-    '∆cox4∆atp6',
-    '∆cox4∆cob',
-    '∆cox4∆cox2',
-    '∆rip1∆atp6',
-    '∆rip1∆cob',
-    '∆rip1∆cox2'
+    # '∆cox4∆atp6',
+    # '∆cox4∆cob',
+    # '∆cox4∆cox2',
+    # '∆rip1∆atp6',
+    # '∆rip1∆cob',
+    # '∆rip1∆cox2'
+    '∆cox4 (ic)',
+    '∆cox4 (il)',
+    '∆rip1 (ic)',
+    '∆rip1 (il)',
 )
 while True:
     answer = input(
