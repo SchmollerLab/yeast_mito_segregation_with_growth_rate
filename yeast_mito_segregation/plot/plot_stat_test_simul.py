@@ -166,7 +166,7 @@ df_pvalues = pd.DataFrame(df_pvalues_data)
 print(df_pvalues)
 
 pvalues_tablename = table_filename.replace(
-    '.csv', 'one_sided_monte_carlo_statistical_analysis.csv'
+    '.csv', '_one_sided_monte_carlo_statistical_analysis.csv'
 )
 pvalues_table_filepath = os.path.join(tables_path, pvalues_tablename)
 df_pvalues.to_csv(pvalues_table_filepath, index=False)
