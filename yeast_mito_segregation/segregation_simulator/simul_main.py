@@ -125,8 +125,8 @@ for start_cell_type in start_cell_types:
     )
     example_cell_filepath = os.path.join(tables_path, single_cells_filename)
     
-    if SAVE:
-        hdf_store_cells = pd.HDFStore(example_cell_filepath, mode='w')
+    # if SAVE:
+    #     hdf_store_cells = pd.HDFStore(example_cell_filepath, mode='w')
     
     dfs = {}
 
@@ -213,8 +213,8 @@ for start_cell_type in start_cell_types:
                         .replace('(il)', 'il')
                     )
                     
-                    if SAVE:
-                        hdf_store_cells[cell_key] = df_cell
+                    # if SAVE:
+                    #     hdf_store_cells[cell_key] = df_cell
 
                     pbar_cells.update()
 
@@ -222,8 +222,6 @@ for start_cell_type in start_cell_types:
                 df_cells = pd.concat(df_cells, names=['cell_idx']).reset_index()
                 
                 df_colony = df_cells.groupby('time').agg(mean_h=('h', 'mean'))
-                
-                import pdb; pdb.set_trace()
                 
                 df_colony['nspl'] = nspl
                 df_colony['ndau'] = ndau
@@ -255,8 +253,9 @@ for start_cell_type in start_cell_types:
     if SAVE:
         final_df.to_csv(final_table_out_filepath)
 
-    if SAVE:
-        hdf_store_cells.close()
+    # if SAVE:
+    #     hdf_store_cells.close()
+
     pbar_cell_type.update()
 
 pbar_cell_type.close()
