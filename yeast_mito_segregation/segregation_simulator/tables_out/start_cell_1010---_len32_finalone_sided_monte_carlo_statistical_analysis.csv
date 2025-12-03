@@ -14,6 +14,12 @@ WT (ic) and ∆cob,rep1,1.0,1.0
 WT (ic) and ∆cox2,rep1,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆cox2,rep2,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆cox2,rep3,0.009900990099009901,0.00010743693326793306
+∆cox4 and ∆cox4 (ic),rep1,1.0,1.0
+∆cox4 and ∆cox4 (ic),rep2,1.0,1.0
+∆cox4 and ∆cox4 (ic),rep3,1.0,1.0
+∆cox4 and ∆cox4 (il),rep1,1.0,1.0
+∆cox4 and ∆cox4 (il),rep2,1.0,1.0
+∆cox4 and ∆cox4 (il),rep3,1.0,1.0
 ∆cox4 and ∆cox4∆atp6,rep2,1.0,1.0
 ∆cox4 and ∆cox4∆atp6,rep3,1.0,1.0
 ∆cox4 and ∆cox4∆atp6,rep1,1.0,1.0
@@ -23,6 +29,12 @@ WT (ic) and ∆cox2,rep3,0.009900990099009901,0.00010743693326793306
 ∆cox4 and ∆cox4∆cox2,rep1,1.0,1.0
 ∆cox4 and ∆cox4∆cox2,rep2,1.0,1.0
 ∆cox4 and ∆cox4∆cox2,rep3,1.0,1.0
+∆rip1 and ∆rip1 (ic),rep1,1.0,1.0
+∆rip1 and ∆rip1 (ic),rep2,1.0,1.0
+∆rip1 and ∆rip1 (ic),rep3,1.0,1.0
+∆rip1 and ∆rip1 (il),rep1,1.0,1.0
+∆rip1 and ∆rip1 (il),rep2,1.0,1.0
+∆rip1 and ∆rip1 (il),rep3,1.0,1.0
 ∆rip1 and ∆rip1∆atp6,rep1,1.0,1.0
 ∆rip1 and ∆rip1∆atp6,rep2,1.0,1.0
 ∆rip1 and ∆rip1∆atp6,rep3,1.0,1.0
