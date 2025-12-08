@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from yeast_mito_segregation.segregation_simulator import (
     table_endname, tables_path, df_post_growth_mating_filepath,
-    df_fast_filepath
+    df_fast_filepath, df_qpcr_data_filepath
 )
     
 
@@ -66,8 +66,9 @@ def clopper_pearson_ci(k, N, alpha=0.05):
     upper = 1.0 if k == N else beta.ppf(1 - alpha/2, k + 1, N - k)
     return lower, upper
 
+df_qcr = pd.read_csv(df_qpcr_data_filepath, index_col='strain')
+
 SHOW_PLOT = False
-mtDNA_RATIO = 0.71
 add_correction = True
 
 start_cell_type = '1010...' # '11...00', '1010...', '00...11
@@ -90,6 +91,8 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
     df_simul_strain_last_timepoint = (
         df_simul_strain[df_simul_strain['time'] == last_time]
     )
+    mtDNA_RATIO = df_qcr.at[strain, 'value']
+    
     df_simul_strain_last_timepoint = (
         df_simul_strain_last_timepoint
             [df_simul_strain_last_timepoint['mtdna_ratio'] == mtDNA_RATIO]
@@ -98,6 +101,9 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
     df_exp = pd.read_csv(df_fast_filepath, index_col='Mating')
 
     sim_percents = df_simul_strain_last_timepoint['mean_h'].values
+    
+    if len(sim_percents) == 0:
+        import pdb; pdb.set_trace()
 
     strain_x = strain.replace('and', 'x')
     if strain_x not in df_exp.index:
@@ -109,9 +115,18 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
     # print(sim_percents.min(), sim_percents.max())
 
     # experimental_percents = [experimental_percents.mean()]
-
-    for row in df_exp_strain.itertuples():
-
+    
+    fig, ax = plt.subplots(1, len(df_exp_strain), figsize=(15, 6))
+    ax = ax.flatten()
+    
+    fig.suptitle(f'Simulated null distribution vs observed - {strain}')
+    
+    print('*'*100)
+    print(f'STRAIN: {strain}\n')
+    for a, row in enumerate(df_exp_strain.itertuples()):
+        
+        axes: plt.Axes = ax[a]
+        
         obs_percent = row.Ratio/100
 
         # Compute one-sided p-value for 'less' (obs smaller than simulated -> selection against)
@@ -134,6 +149,7 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
             f"Approx 95% CI for p (Clopper-Pearson): "
             f"[{ci_lower:.4f}, {ci_upper:.4f}]"
         )
+        print('-'*100)
         
         p_values.append(p)
 
@@ -142,24 +158,31 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
         df_pvalues_data['one_side_monte_carlo_p_value'].append(p)
 
         # Visualization
-        plt.hist(sim_percents, bins=25, alpha=0.8)
-        plt.axvline(obs_percent, color='red', linestyle='--', linewidth=2, label=f'Observed = {obs_percent:.3f}')
-        plt.xlabel('Percent dark (simulated null)')
-        plt.ylabel('Count')
-        plt.title('Simulated null distribution vs observed')
-        plt.legend()
+        axes.hist(sim_percents, bins=25, alpha=0.8)
+        axes.axvline(obs_percent, color='red', linestyle='--', linewidth=2, label=f'Observed = {obs_percent:.3f}')
+        axes.set_xlabel('Percent dark (simulated null)')
+        axes.set_ylabel('Count')
+        axes.set_title(f'Replicate {row.Replicate}')
+        axes.legend()
     
-    if SHOW_PLOT:
-        plt.show()
-    else:
-        plt.close()
-
     fisher_result = combine_pvalues(p_values)
     fisher_pval = fisher_result.pvalue
 
     df_pvalues_data['combined_p_value_fisher'].extend([fisher_pval]*len(p_values))
+    
+    print('='*100)
 
     print(f'Fisher p-value = {fisher_pval:.3f}')
+    
+    print('*'*100)
+    
+    if SHOW_PLOT:
+        plt.show()
+        import pdb; pdb.set_trace()
+    else:
+        plt.close()
+
+    
 
 df_pvalues = pd.DataFrame(df_pvalues_data)
 

@@ -2,45 +2,45 @@ strain,Replicate,one_side_monte_carlo_p_value,combined_p_value_fisher
 WT (ic) and WT (ic),rep1,1.0,1.0
 WT (ic) and WT (ic),rep2,1.0,1.0
 WT (ic) and WT (ic),rep3,1.0,1.0
-WT (ic) and WT (il),rep3,1.0,1.0
-WT (ic) and WT (il),rep1,1.0,1.0
-WT (ic) and WT (il),rep2,1.0,1.0
+WT (ic) and WT (il),rep3,0.009900990099009901,0.00010743693326793306
+WT (ic) and WT (il),rep1,0.009900990099009901,0.00010743693326793306
+WT (ic) and WT (il),rep2,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆atp6,rep1,0.009900990099009901,0.005178797745674028
 WT (ic) and ∆atp6,rep2,0.009900990099009901,0.005178797745674028
 WT (ic) and ∆atp6,rep3,1.0,0.005178797745674028
-WT (ic) and ∆cob,rep2,1.0,1.0
-WT (ic) and ∆cob,rep3,1.0,1.0
-WT (ic) and ∆cob,rep1,1.0,1.0
+WT (ic) and ∆cob,rep2,0.009900990099009901,0.00010743693326793306
+WT (ic) and ∆cob,rep3,0.009900990099009901,0.00010743693326793306
+WT (ic) and ∆cob,rep1,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆cox2,rep1,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆cox2,rep2,0.009900990099009901,0.00010743693326793306
 WT (ic) and ∆cox2,rep3,0.009900990099009901,0.00010743693326793306
-∆cox4 and ∆cox4 (ic),rep1,1.0,1.0
-∆cox4 and ∆cox4 (ic),rep2,1.0,1.0
-∆cox4 and ∆cox4 (ic),rep3,1.0,1.0
-∆cox4 and ∆cox4 (il),rep1,1.0,1.0
-∆cox4 and ∆cox4 (il),rep2,1.0,1.0
-∆cox4 and ∆cox4 (il),rep3,1.0,1.0
-∆cox4 and ∆cox4∆atp6,rep2,1.0,1.0
-∆cox4 and ∆cox4∆atp6,rep3,1.0,1.0
-∆cox4 and ∆cox4∆atp6,rep1,1.0,1.0
-∆cox4 and ∆cox4∆cob,rep2,1.0,1.0
-∆cox4 and ∆cox4∆cob,rep3,1.0,1.0
-∆cox4 and ∆cox4∆cob,rep1,1.0,1.0
-∆cox4 and ∆cox4∆cox2,rep1,1.0,1.0
-∆cox4 and ∆cox4∆cox2,rep2,1.0,1.0
-∆cox4 and ∆cox4∆cox2,rep3,1.0,1.0
-∆rip1 and ∆rip1 (ic),rep1,1.0,1.0
-∆rip1 and ∆rip1 (ic),rep2,1.0,1.0
-∆rip1 and ∆rip1 (ic),rep3,1.0,1.0
-∆rip1 and ∆rip1 (il),rep1,1.0,1.0
-∆rip1 and ∆rip1 (il),rep2,1.0,1.0
-∆rip1 and ∆rip1 (il),rep3,1.0,1.0
+∆cox4 and ∆cox4 (ic),rep1,1.0,0.999606704435356
+∆cox4 and ∆cox4 (ic),rep2,0.8712871287128713,0.999606704435356
+∆cox4 and ∆cox4 (ic),rep3,1.0,0.999606704435356
+∆cox4 and ∆cox4 (il),rep1,0.9900990099009901,0.3159811844904807
+∆cox4 and ∆cox4 (il),rep2,0.0297029702970297,0.3159811844904807
+∆cox4 and ∆cox4 (il),rep3,1.0,0.3159811844904807
+∆cox4 and ∆cox4∆atp6,rep2,1.0,0.16103751692401805
+∆cox4 and ∆cox4∆atp6,rep3,0.009900990099009901,0.16103751692401805
+∆cox4 and ∆cox4∆atp6,rep1,1.0,0.16103751692401805
+∆cox4 and ∆cox4∆cob,rep2,0.009900990099009901,0.005054356580238492
+∆cox4 and ∆cox4∆cob,rep3,0.009900990099009901,0.005054356580238492
+∆cox4 and ∆cox4∆cob,rep1,0.9702970297029703,0.005054356580238492
+∆cox4 and ∆cox4∆cox2,rep1,1.0,0.16103751692401805
+∆cox4 and ∆cox4∆cox2,rep2,1.0,0.16103751692401805
+∆cox4 and ∆cox4∆cox2,rep3,0.009900990099009901,0.16103751692401805
+∆rip1 and ∆rip1 (ic),rep1,1.0,0.999941475728643
+∆rip1 and ∆rip1 (ic),rep2,0.9306930693069307,0.999941475728643
+∆rip1 and ∆rip1 (ic),rep3,1.0,0.999941475728643
+∆rip1 and ∆rip1 (il),rep1,0.009900990099009901,0.16103751692401805
+∆rip1 and ∆rip1 (il),rep2,1.0,0.16103751692401805
+∆rip1 and ∆rip1 (il),rep3,1.0,0.16103751692401805
 ∆rip1 and ∆rip1∆atp6,rep1,1.0,1.0
 ∆rip1 and ∆rip1∆atp6,rep2,1.0,1.0
 ∆rip1 and ∆rip1∆atp6,rep3,1.0,1.0
-∆rip1 and ∆rip1∆cob,rep1,1.0,1.0
-∆rip1 and ∆rip1∆cob,rep2,1.0,1.0
-∆rip1 and ∆rip1∆cob,rep3,1.0,1.0
+∆rip1 and ∆rip1∆cob,rep1,1.0,0.16103751692401805
+∆rip1 and ∆rip1∆cob,rep2,1.0,0.16103751692401805
+∆rip1 and ∆rip1∆cob,rep3,0.009900990099009901,0.16103751692401805
 ∆rip1 and ∆rip1∆cox2,rep1,1.0,1.0
 ∆rip1 and ∆rip1∆cox2,rep2,1.0,1.0
 ∆rip1 and ∆rip1∆cox2,rep3,1.0,1.0
