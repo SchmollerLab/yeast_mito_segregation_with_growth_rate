@@ -18,13 +18,16 @@ from yeast_mito_segregation.segregation_simulator.utils import (
     get_single_cells_filename
 )
 
-def monte_carlo_one_sided_p(obs, sims, direction='less', add_one_correction=True):
+def monte_carlo_p_value(obs, sims, one_sided=True, direction='less', add_one_correction=True):
     """
-    Compute one-sided Monte Carlo p-value comparing observed value to simulated null distribution.
+    Compute Monte Carlo p-value comparing observed value to simulated null distribution.
 
     Args:
         obs : float
             Observed statistic (percent dark, e.g. 0.42 for 42%).
+        one_sided : bool
+            If True, compute one-sided p-value.
+            If False, compute two-sided p-value.
         sims : array-like
             Simulated statistics under null (length N).
         direction : 'less' or 'greater'
@@ -43,12 +46,14 @@ def monte_carlo_one_sided_p(obs, sims, direction='less', add_one_correction=True
     """
     sims = np.asarray(sims)
     N = sims.size
-    if direction == 'less':
+    if not one_sided:
+        k = np.sum(np.abs(sims - np.mean(sims)) >= np.abs(obs - np.mean(sims)))
+    elif direction == 'less':
         k = np.sum(sims <= obs)
     elif direction == 'greater':
         k = np.sum(sims >= obs)
     else:
-        raise ValueError("direction must be 'less' or 'greater'")
+        raise ValueError("direction must be 'less' or 'greater' or one_sided=False")
 
     if add_one_correction:
         p = (k + 1) / (N + 1)
@@ -68,7 +73,7 @@ def clopper_pearson_ci(k, N, alpha=0.05):
 
 df_qcr = pd.read_csv(df_qpcr_data_filepath, index_col='strain')
 
-SHOW_PLOT = False
+SHOW_PLOT = True
 add_correction = True
 
 start_cell_type = '1010...' # '11...00', '1010...', '00...11
@@ -110,7 +115,8 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
         continue
 
     df_exp_strain = df_exp.loc[strain.replace('and', 'x')]
-    p_values = []
+    p_values_ts = []
+    p_values_os = []
 
     # print(sim_percents.min(), sim_percents.max())
 
@@ -128,34 +134,54 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
         axes: plt.Axes = ax[a]
         
         obs_percent = row.Ratio/100
-
+        
         # Compute one-sided p-value for 'less' (obs smaller than simulated -> selection against)
-        p, k, N = monte_carlo_one_sided_p(
+        p_os, k_os, N = monte_carlo_p_value(
             obs=obs_percent, 
             sims=sim_percents, 
+            one_sided=True,
             direction='less', 
             add_one_correction=add_correction
         )
         # note: use k+1,N+1 if correction used
-        ci_lower, ci_upper = clopper_pearson_ci(
-            k+1 if add_correction else k, 
+        ci_lower_os, ci_upper_os = clopper_pearson_ci(
+            k_os+1 if add_correction else k_os, 
             N+1 if add_correction else N,
         )  
+        
+        # Compute two-sided p-value
+        p_ts, k_ts, N = monte_carlo_p_value(
+            obs=obs_percent, 
+            sims=sim_percents, 
+            one_sided=False,
+            add_one_correction=add_correction
+        )
+        # note: use k+1,N+1 if correction used
+        ci_lower_ts, ci_upper_ts = clopper_pearson_ci(
+            k_ts+1 if add_correction else k_ts, 
+            N+1 if add_correction else N,
+        )
 
         print(f"Observed percent dark: {obs_percent:.3f}")
-        print(f"Simulations: N = {N}, #sim <= obs = {k}")
-        print(f"One-sided Monte Carlo p-value (left-tailed, +1 correction): {p:.4f}")
+        print(f"Simulations: N = {N}, #sim <= obs = {k_os}")
+        print(f"One-sided Monte Carlo p-value (left-tailed, +1 correction): {p_os:.4f}")
         print(
             f"Approx 95% CI for p (Clopper-Pearson): "
-            f"[{ci_lower:.4f}, {ci_upper:.4f}]"
+            f"[{ci_lower_os:.4f}, {ci_upper_os:.4f}]"
+        )
+        print(f"Two-sided Monte Carlo p-value (left-tailed, +1 correction): {p_ts:.4f}")
+        print(
+            f"Approx 95% CI for p (Clopper-Pearson): "
+            f"[{ci_lower_ts:.4f}, {ci_upper_ts:.4f}]"
         )
         print('-'*100)
-        
-        p_values.append(p)
 
+        p_values_ts.append(p_ts)
+        p_values_os.append(p_os)
         df_pvalues_data['strain'].append(strain)
         df_pvalues_data['Replicate'].append(row.Replicate)
-        df_pvalues_data['one_side_monte_carlo_p_value'].append(p)
+        df_pvalues_data['two_sided_monte_carlo_p_value'].append(p_ts)
+        df_pvalues_data['one_sided_monte_carlo_p_value'].append(p_os)
 
         # Visualization
         axes.hist(sim_percents, bins=25, alpha=0.8)
@@ -165,15 +191,20 @@ for strain, df_simul_strain in df_simul.groupby('strain'):
         axes.set_title(f'Replicate {row.Replicate}')
         axes.legend()
     
-    fisher_result = combine_pvalues(p_values)
-    fisher_pval = fisher_result.pvalue
+    fisher_result_os = combine_pvalues(p_values_os)
+    fisher_pval_os = fisher_result_os.pvalue
 
-    df_pvalues_data['combined_p_value_fisher'].extend([fisher_pval]*len(p_values))
+    df_pvalues_data['combined_one_sided_p_value_fisher'].extend([fisher_pval_os]*len(p_values_os))
+    
+    fisher_result_ts = combine_pvalues(p_values_ts)
+    fisher_pval_ts = fisher_result_ts.pvalue
+    df_pvalues_data['combined_two_sided_p_value_fisher'].extend([fisher_pval_ts]*len(p_values_ts))
     
     print('='*100)
 
-    print(f'Fisher p-value = {fisher_pval:.3f}')
-    
+    print(f'Fisher one-sided p-value = {fisher_pval_os:.3f}')
+    print(f'Fisher two-sided p-value = {fisher_pval_ts:.3f}')
+
     print('*'*100)
     
     if SHOW_PLOT:
@@ -189,9 +220,15 @@ df_pvalues = pd.DataFrame(df_pvalues_data)
 print(df_pvalues)
 
 pvalues_tablename = table_filename.replace(
-    '.csv', '_one_sided_monte_carlo_statistical_analysis.csv'
+    '.csv', '_monte_carlo_statistical_analysis.csv'
 )
 pvalues_table_filepath = os.path.join(tables_path, pvalues_tablename)
+
+answer = input(f'Save p-values table to {pvalues_table_filepath}? (y/n): ')
+if answer.lower() != 'y':
+    print('Saving cancelled')
+    exit(0)
+    
 df_pvalues.to_csv(pvalues_table_filepath, index=False)
 
 print(f'Table saved at {pvalues_table_filepath}')
